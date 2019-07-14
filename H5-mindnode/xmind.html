@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/preventoverscroll.min.js"></script>
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <title>xmind</title>
+    <meta name="keywords" content="思维导图">
+    <meta name="description"
+          content="思维导图">
+    <meta name="viewport"
+          content="user-scalable=no, width=device-width, height=device-height, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scae=1.0, user-scalable=no"/>
+    <meta name="viewport" content="width=device-width,initial-scalle=1,maximum-scale=1,user-scalable=0">
+    <meta name="viewport" content="user-scalable=no, width=device-width, height=device-height"/>
+    <style>* {
+        font-family: "PingFang SC", "Microsoft Yahei", arial, sans-serif, Serif
+    }</style>
+</head>
+</html>
+<link rel="stylesheet" href="css/vex.css">
+<link rel="stylesheet" href="css/vex-theme-plain.css">
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="js/hammer.min.js"></script>
+<script src="js/vex.combined.min.js"></script>
+<script>vex.defaultOptions.className = "vex-theme-plain"</script>
+<style>* {
+    margin: 0;
+    padding: 0
+}
+
+.fixed {
+    position: fixed;
+    top: 10px;
+    right: 2px
+}
+
+.tool-font, a {
+    font-size: 12px;
+    color: #666;
+    text-decoration: none !important;
+    z-index: 100000
+}</style>
+<body></body>
+<link href="css/nouislider.min.css" rel="stylesheet">
+<script src="js/vue.min.js"></script>
+<script src="js/nouislider.min.js"></script>
+<style>.right-tools {
+    display: none
+}
+
+.content-table {
+    display: none
+}
+
+.tool-dock {
+    display: none
+}
+
+#content-table-fixed-indicator {
+    display: none
+}
+
+#content-table-list {
+    list-style: none
+}</style>
+
+<div class="fixed tool-font right-tools"><span class="tool" id="change-theme">
+    <span style="cursor:pointer">主题</span> </span>
+    <script>false || document.write('<span class="tool" id="shortcut-btn"> <i class="fa fa-flash" aria-hidden="true" style="color: rgb(211, 53, 62)"></i> 快捷键 </span>')</script>
+    <span class="tool" id="account-drop">
+        <svg t="1522130212160" class="vip-icon" style="" viewBox="0 0 1204 1024"
+                                                  version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4544"
+                                                  xmlns:xlink="http://www.w3.org/1999/xlink" width="32.921875"
+                                                  height="24">
+        <defs>
+            <style type="text/css"></style>
+        </defs>
+    </svg> </span></a><i class="hide notification-point" id="notification-point"></i></span></div>
+<style>.nodes-list {
+    position: fixed;
+    width: 500px;
+    left: -510px;
+    height: 100%;
+    z-index: 10000;
+    top: 0;
+    background: #fff;
+    border-right: 1px solid #ddd;
+    transform: translate3d(0, 0, 0);
+    transition: all .1s ease-in
+}
+
+.nodes-list-item {
+    padding: 10px 0;
+    height: 50px;
+    color: #747474;
+    font-size: 15px;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd
+}
+
+.nodes-list-item:active {
+    background: #e9eae9
+}
+
+.nodes-list-item-title {
+    color: #000
+}
+
+.nodes-list-item-title:before {
+    content: '# '
+}
+
+.item-content {
+    padding: 0 0 0 20px
+}
+
+.nodes-list-show {
+    left: 0
+}
+
+.nodes-list-open {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    cursor: pointer;
+    user-select: none
+}
+
+.nodes-list-item-active {
+    background: #f6f8f6
+}
+
+.folders-wrapper {
+    width: 200px;
+    height: 100%;
+    overflow: auto;
+    float: left;
+    background: #333538;
+    color: #c4c4c4
+}
+
+.folder-item {
+    padding: 0 10px 0 20px;
+    height: 30px;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 13px;
+    cursor: pointer
+}
+
+.folder-item.active {
+    background-color: #d3353e;
+    color: #fff
+}
+
+.folder-item.drag-over {
+    background-color: rgba(211, 53, 62, .3);
+    color: #fff
+}
+
+.folder-name {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    line-height: 30px
+}
+
+.folder-name:before {
+    content: '# '
+}
+
+.files-wrapper {
+    position: relative;
+    width: 300px;
+    float: left;
+    height: 100%;
+    overflow: auto
+}
+
+.files-tools {
+    position: absolute;
+    width: 300px;
+    top: 0;
+    right: 0;
+    line-height: 40px;
+    border-bottom: 1px solid #ddd;
+    background: #fff;
+    z-index: 100;
+    text-align: center;
+    font-size: 14px
+}
+
+.tools-placeholder {
+    width: 100%;
+    height: 40px
+}
+
+.tools-title {
+    min-width: 50px;
+    max-width: 50%;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin: 0 auto
+}
+
+.add-new-nodes-btn {
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 10px;
+    bottom: 0;
+    height: 18px;
+    font-size: 18px;
+    font-weight: lighter;
+    cursor: pointer
+}
+
+.folders-tools {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 200px;
+    color: #c4c4c4;
+    height: 30px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 30px;
+    background: #333538
+}
+
+.add-folder-icon {
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    right: 10px;
+    height: 18px;
+    font-size: 18px
+}
+
+.add-folder-btn {
+    cursor: pointer
+}
+
+.created-date {
+    margin-top: 10px;
+    font-size: 12px
+}
+
+.nodes-list div {
+    user-select: none
+}
+
+.login-mask {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, .9);
+    z-index: 10000
+}
+
+.login-mask-content {
+    width: 200px;
+    height: 200px;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #555
+}
+
+.hide {
+    display: none
+}
+
+#change-folder-btn, .back-btn, .forwards-btn {
+    display: none
+}
+
+.mobile .nodes-list {
+    z-index: 100001;
+    width: 100%;
+    left: -100%;
+    border-right: 0
+}
+
+.mobile .nodes-list-show {
+    left: 0;
+    border-right: 1px solid #ddd
+}
+
+.mobile .folders-tools {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 40px;
+    line-height: 40px
+}
+
+.mobile .add-folder-btn {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    padding: 0 20px;
+    text-align: right;
+    color: #fff
+}
+
+.mobile .folders-wrapper {
+    position: absolute;
+    width: 100%;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch
+}
+
+.mobile .files-tools {
+    position: absolute;
+    width: 100%
+}
+
+.mobile .back-btn {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 20px;
+    width: 18px;
+    height: 18px;
+    margin: auto 0;
+    line-height: 18px;
+    font-size: 25px;
+    font-weight: lighter;
+    cursor: pointer
+}
+
+.mobile .files-wrapper {
+    position: absolute;
+    background: #fff;
+    color: #000;
+    width: 100%;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch
+}
+
+.mobile .folders-list {
+    border-bottom: 1px solid #ddd
+}
+
+.mobile .folder-item {
+    height: 40px;
+    line-height: 40px;
+    padding: 0;
+    position: relative
+}
+
+.mobile .folder-item:active {
+    background: rgba(211, 53, 62, .6)
+}
+
+.mobile .folder-name {
+    height: 40px;
+    line-height: 40px;
+    margin: 0 20px;
+    box-sizing: border-box;
+    padding-right: 20px
+}
+
+.mobile .forwards-btn {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 20px;
+    color: #ccc;
+    font-weight: lighter;
+    font-size: 18px;
+    text-align: center;
+    line-height: 18px;
+    width: 18px;
+    height: 18px;
+    margin: auto 0
+}
+
+.mobile .tools-title {
+    height: 40px
+}
+
+.mobile #change-folder-btn {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: 40px;
+    width: 40px;
+    line-height: 40px;
+    font-weight: lighter
+}
+
+.mobile #folder-title > span {
+    display: inline-block;
+    overflow: hidden;
+    max-width: 100px;
+    height: 40px;
+    line-height: 40px;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.mobile .menu {
+    z-index: 100001
+}
+
+.mobile .rtl {
+    animation: rtl .2s ease-out forwards
+}
+
+@keyframes rtl {
+    0% {
+        transform: translateX(100%)
+    }
+    100% {
+        transform: translateX(0)
+    }
+}
+
+.mobile .ltr {
+    animation: ltr .2s ease-out forwards
+}
+
+@keyframes ltr {
+    0% {
+        transform: translateX(0)
+    }
+    100% {
+        transform: translateX(100%)
+    }
+}</style>
+<div class="nodes-list-open tool-font"><span class="tool" id="nodes-list-open"><i class="fa fa-align-justify"
+                                                                                  aria-hidden="true"></i> 文件夹 </span><span
+        id="saver" class="tool"><i class="fa fa-floppy-o saver" aria-hidden="true"></i> <i
+        class="fa fa-refresh spin hide" aria-hidden="true"></i> <i class="fa fa-check done hide" style="color:green"
+                                                                   aria-hidden="true"></i> <span
+        class="wording">保存</span></span></div>
+<div class="nodes-list" id="nodes-list">
+    <div class="folders-wrapper">
+        <div class="tools-placeholder"></div>
+        <div id="folders-list">
+            <div class="folder-item active" id="folder-unclassified" data-id="unclassified">
+                <div class="folder-name">未归类</div>
+                <i class="fa fa-angle-right forwards-btn" aria-hidden="true"></i></div>
+            <div id="dragglable-folders"></div>
+        </div>
+        <div class="tools-placeholder"></div>
+    </div>
+    <div class="folders-tools"><i id="back-to-files-list" class="fa fa-angle-left back-btn" aria-hidden="true"></i>
+
+        <div class="add-folder-btn" id="add-new-folder"><i class="fa fa-plus-circle" aria-hidden="true"></i> 新建文件夹</div>
+    </div>
+    <div class="files-wrapper">
+        <div class="tools-placeholder"></div>
+        <div id="files-list"></div>
+    </div>
+    <div class="files-tools"><i id="back-to-desktop" class="fa fa-angle-left back-btn" aria-hidden="true"></i>
+
+        <div class="tools-title" id="folder-title"><span>未归类</span> <i id="change-folder-btn" class="fa fa-angle-down"
+                                                                       aria-hidden="true"></i></div>
+        <i id="create-mind-node-icon" title="新建思维导图" class="fa fa-pencil-square-o add-new-nodes-btn"
+           aria-hidden="true"></i></div>
+</div>
+<style>.loading {
+    position: fixed;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    height: 20px;
+    width: 70px;
+    text-align: center;
+    color: #ccc;
+    font-weight: lighter;
+    display: none
+}</style>
+<div class="loading" id="loading">加载中...</div>
+<style>#shortcut-table {
+    display: none
+}
+
+.shortcut-list {
+    font-size: 13px
+}
+
+.shortcut-description {
+    display: inline-block;
+    width: 150px;
+    text-align: right
+}
+
+.shortcut-description::after {
+    content: '：'
+}
+
+.shortcut-item {
+    border-bottom: 1px solid #f1f1f1;
+    padding: 5px 0
+}
+
+code.shortcut-detail {
+    border: 1px #ccc solid;
+    padding: 0 4px;
+    color: #bd7272
+}</style>
+<div id="shortcut-table">
+    <div class="shortcut-list">
+        <div class="shortcut-item"><span class="shortcut-description">移动画布</span> <code
+                class="shortcut-detail">空格键</code>+ <code class="shortcut-detail">鼠标左键拖动画布</code></div>
+        <div class="shortcut-item"><span class="shortcut-description">输入换行</span> <code
+                class="shortcut-detail">Shift</code>+ <code class="shortcut-detail">Enter</code></div>
+        <div class="shortcut-item"><span class="shortcut-description">新增下级节点</span> <code
+                class="shortcut-detail">Tab</code></div>
+        <div class="shortcut-item"><span class="shortcut-description">新增同级节点</span> <code
+                class="shortcut-detail">Enter</code></div>
+        <div class="shortcut-item"><span class="shortcut-description">折叠子节点</span> <code
+                class="shortcut-detail">Ctrl</code> + <code class="shortcut-detail">Up</code></div>
+        <div class="shortcut-item"><span class="shortcut-description">展开子节点</span> <code
+                class="shortcut-detail">Ctrl</code> + <code class="shortcut-detail">Down</code></div>
+        <div class="shortcut-item"><span class="shortcut-description">分离节点</span> <code
+                class="shortcut-detail">Ctrl</code> + <code class="shortcut-detail">j</code></div>
+        <div class="shortcut-item"><span class="shortcut-description">适应视图</span> <code
+                class="shortcut-detail">Ctrl</code> + <code class="shortcut-detail">k</code></div>
+        <div class="shortcut-item"><span class="shortcut-description">撤销</span><!-- 右键菜单点击撤销 --> <code
+                class="shortcut-detail">Ctrl</code> + <code class="shortcut-detail">z</code></div>
+        <div class="shortcut-item"><span class="shortcut-description">重做</span><!-- 右键菜单点击重做 --> <code
+                class="shortcut-detail">Ctrl</code> + <code class="shortcut-detail">y</code></div>
+        <div class="shortcut-item">
+            <span class="shortcut-description">保存</span>
+            <code class="shortcut-detail">Ctrl</code> +
+            <code class="shortcut-detail">s</code>
+        </div>
+    </div>
+</div>
+<div id="root"></div>
+<form style="display:none"><input type="file" name="image" id="upload-image-input"></form>
+<div class="tool-dock dock-transition">
+    <div class="dock-controll-btn"></div>
+    <div class="dock-buttons"><i class="fa fa-file-text disabled tippy" id="dock-item-note" title="选中节点，添加备注"></i> <i
+            class="fa fa-picture-o tippy" id="dock-item-upload-image" aria-hidden="true" title="上传图片"></i> <i
+            class="fa fa-list tippy noselect" id="dock-item-content-table" aria-hidden="true" title="目录大纲"></i> <i
+            class="fa fa-history tippy noselect" id="toggle-histories" aria-hidden="true" title="历史版本恢复"></i></div>
+    <div class="dock-content">
+        <div id="note-container"></div>
+        <div id="histories-list-container" class="animate"><h3 class="history-title"><span><i
+                class="fa fa-history tippy" id="toggle-histories" aria-hidden="true" title="历史版本"></i>&nbsp;历史版本</span>
+        </h3>
+
+            <div class="no-data" style="height:350px">暂无历史版本</div>
+            <div id="histories-list"></div>
+            <div class="loading-modal" style="display:none"></div>
+        </div>
+        <div id="content-table" class="content-table">
+            <div class="content-table-head"><input type="text" placeholder="搜索" id="search-nodes" class="search-input">
+                <span class="toggle-content-table"><a>收起</a></span></div>
+            <div id="content-table-list-scroll-wrapper">
+                <ul id="content-table-list"></ul>
+                <div id="content-table-list-placeholder"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+var userId = "5abc19fd9703d25ec36f731a", userEmail = "crazylaser@163.com", hasNotification = true, money = 100, isPremiumUser = true, premiumExpireDate = "Thu Mar 29 2019 06:41:01 GMT+0800 (CST)", hasPublicService = true, isBlocked = false, userSavecount = 3, payPlanIndex = 1, payPlan = [{
+    "name": "一年会员",
+    "amount": 99,
+    "inc": [1, "year"]
+}, {
+    "name": "永久会员",
+    "amount": 99,
+    "inc": [200, "year"]
+}], userSignupTime = "Thu Mar 29 2018 06:41:01 GMT+0800 (CST)";  </script>
+<script src="js/index-c7eb996c3b9f1980c9ac.js"></script>
+<style>footer {
+    position: fixed;
+    margin: auto;
+    left: 0;
+    right: 0;
+    bottom: 10px;
+    font-size: 12px;
+    width: 100%;
+    text-align: center
+}
+
+footer a {
+    color: #5050ab
+}</style>
