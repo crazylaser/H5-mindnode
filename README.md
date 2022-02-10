@@ -1,8 +1,5 @@
-仿mindenode  H5版本
-
-- [ ] 配合properDB.js实现存储功能
+仿mindenode  H5版本 原产品凹脑图https://aonaotu.com/
+动手能力强的可配合properDB.js实现本地存储
 
 ![1563073779432](README.assets/1563073779432.png)
-
-侵删 crazylaser@163.com
 
